@@ -10,3 +10,6 @@ server/instance/
 *.sqlite
 img
 cache
+**/error_logfile.txt
+**/access_logfile.txt
+**/*.sqlite
