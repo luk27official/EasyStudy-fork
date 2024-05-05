@@ -1,1 +1,1 @@
-docker run -p 5000:5000 --mount type=bind,source=${PWD},target=/app easy-study
+docker run -p 5000:5000 --mount type=bind,source=${PWD},target=/app --gpus all easy-study
