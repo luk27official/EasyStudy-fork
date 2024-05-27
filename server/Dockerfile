@@ -28,9 +28,9 @@ RUN pip install python3-discogs-client
 RUN pip install cachelib
 #RUN pip install lenskit
 RUN pip install pytest
-RUN pip install tensorflow
+RUN pip install tensorflow==2.15.0 # needed for TF-recommenders (Matrix Factorization)
 RUN pip install tensorflow-recommenders
-RUN pip install tensorflow[and-cuda]
+# RUN pip install tensorflow[and-cuda]
 RUN pip install black --find-links https://download.pytorch.org/whl/cu113/torch_stable.html torch==1.12.1+cu113 torchaudio==0.12.1+cu113 torchvision==0.13.1+cu113
 # ELSA https://github.com/recombee/ELSA
 RUN pip install elsarec
@@ -52,6 +52,9 @@ ENV LD_LIBRARY_PATH /opt/conda/lib/python3.9/site-packages/nvidia/cusparse/lib:/
 WORKDIR /app
 
 EXPOSE 5000
+
+# ENTRYPOINT [ "bash" ]
+# CMD ["-c", "pip freeze"]
 
 ENTRYPOINT [ "python" ]
 CMD ["-m", "gunicorn", "-w", "1", "--bind", "0.0.0.0:5000", "--timeout", "0", "--preload", "--log-level", "debug", "--access-logfile", "/app/access_logfile.txt", "--error-logfile", "/app/error_logfile.txt", "app:create_app()"]
