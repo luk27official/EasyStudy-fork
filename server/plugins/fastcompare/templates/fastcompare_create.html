@@ -482,7 +482,7 @@
                       let pVal = this.selectedAlgorithmsParameters[i][j].value;
                       let algoIdx = this.availableAlgorithmNames.indexOf(this.selectedAlgorithms[i]);
                       let algoParams = this.availableAlgorithmsData[algoIdx]["parameters"];
-                      result = result && pVal != null && pVal != '';
+                      result = result && pVal != null && pVal !== '';
                       if (result) {
                         let pType = this.findParamType(algoParams, j);
                         if (pType == "int") {
@@ -525,7 +525,6 @@
                       }
                     }
                   }
-
                   let loaderIdx = this.dataLoaderNames.indexOf(this.dataLoader);
                   let loaderParams = this.dataLoaderData[loaderIdx]["parameters"];
                   let dataLoaderParams = this.dataLoadersParameters[loaderIdx];
