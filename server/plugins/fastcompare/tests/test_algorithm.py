@@ -2,6 +2,7 @@ import time
 
 import numpy as np
 from plugins.fastcompare.algo.ease import EASE
+from plugins.fastcompare.algo.elsa_alg import ELSAWrapper
 from plugins.fastcompare.algo.wrappers.data_loadering import MLDataLoaderWrapper
 
 import pytest
@@ -9,9 +10,23 @@ import pytest
 from plugins.fastcompare import filter_params
 
 tested_algorithm_combinations = [
-    (EASE, {"displayed_name": "Something", "positive_threshold": 3.0, "l2": 0.01}),
+    # (EASE, {"displayed_name": "Something", "positive_threshold": 3.0, "l2": 0.01}),
+    (
+        ELSAWrapper,
+        {
+            "displayed_name": "ELSA",
+            "factors": 256,
+            "num_epochs": 5,
+            "batch_size": 128,
+            "postprocess": True,
+            "diversity_threshold": 0.5,
+            "novelty_weight": 0.9,
+            "serendipity_weight": 0.5,
+        },
+    ),
     # Add more parameter combinations if needed (e.g. add your algorithm implementation)
 ]
+
 
 @pytest.fixture(scope="session")
 def loader():
@@ -20,13 +35,15 @@ def loader():
     loader.load_data()
     return loader
 
+
 @pytest.fixture(scope="session")
 def fitted_algorithm(request, loader):
     algorithm_factory, algorithm_parameters = request.param
     print(f"Fitted_algorithm fixture with: {algorithm_factory}")
-    assert hasattr(algorithm_factory, "name") and callable(getattr(algorithm_factory, "name")), "Algorithm must provide name() method"
+    assert hasattr(algorithm_factory, "name") and callable(
+        getattr(algorithm_factory, "name")
+    ), "Algorithm must provide name() method"
     algorithm_name = algorithm_factory.name()
-
 
     # Construct the algorithm with parameters from config
     # And construct the algorithm
@@ -37,12 +54,9 @@ def fitted_algorithm(request, loader):
     print(f"Done training algorithm: {algorithm_displayed_name}")
     return algorithm
 
+
 # Verify prediction filtering works as expected
-@pytest.mark.parametrize(
-    'fitted_algorithm',
-    tested_algorithm_combinations,
-    indirect=True
-)
+@pytest.mark.parametrize("fitted_algorithm", tested_algorithm_combinations, indirect=True)
 def test_predict_filtering(fitted_algorithm, loader):
     all_items = loader.ratings_df.item.unique()
     np.random.seed(42)
@@ -55,11 +69,7 @@ def test_predict_filtering(fitted_algorithm, loader):
 
 
 # Verify prediction shape is as expected
-@pytest.mark.parametrize(
-    'fitted_algorithm',
-    tested_algorithm_combinations,
-    indirect=True
-)
+@pytest.mark.parametrize("fitted_algorithm", tested_algorithm_combinations, indirect=True)
 def test_predict_shape(fitted_algorithm):
     for k in range(1, 101):
         res = fitted_algorithm.predict([], [], k)
@@ -67,11 +77,7 @@ def test_predict_shape(fitted_algorithm):
 
 
 # Verify "rough prediction speed" is in reasonable range
-@pytest.mark.parametrize(
-    'fitted_algorithm',
-    tested_algorithm_combinations,
-    indirect=True
-)
+@pytest.mark.parametrize("fitted_algorithm", tested_algorithm_combinations, indirect=True)
 def test_predict_speed(fitted_algorithm):
     n_iters = 10
     for k in range(1, 101):
