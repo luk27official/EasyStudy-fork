@@ -1,4 +1,20 @@
 # About
+This repository contains the sources for my extension (ELSA + evaluation & comparsion to EASE) of the EasyStudy framework.
+
+## Features
+- ELSA implementation for FastCompare plugin
+  - `server/plugins/fastcompare/algo/elsa_alg.py`
+  - vanilla (no modifications)
+  - with user-defined postprocessing (diversity, novelty, serendipity)
+  - added tests to PyTest
+  - comparsion to EASE
+  - evaluation of ELSA and EASE
+- attempt to support CUDA with Docker, added PyTorch to Dockerfile
+- added docker-compose for easier deployment
+
+**The original README follows.**
+
+# (Original) About
 This is a repository with sources for the paper *EasyStudy: Framework for Easy Deployment of User Studies on Recommender Systems*
 
 # About EasyStudy
